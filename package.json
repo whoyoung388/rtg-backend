@@ -4,16 +4,16 @@
   "description": "Take home assignment for backend candidates at Rooms To Go.",
   "main": "app.js",
   "scripts": {
-    "test": "npx mocha test"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/RoomstoGoDigital/backend-take-home.git"
+    "url": "git+https://github.com/whoyoung388/rtg-backend.git"
   },
-  "author": "Yudhishthir Singh (ysingh)",
+  "author": "Yann Hu",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/RoomstoGoDigital/backend-take-home/issues"
+    "url": "https://github.com/whoyoung388/rtg-backend/issues"
   },
-  "homepage": "https://github.com/RoomstoGoDigital/backend-take-home#readme"
+  "homepage": "https://github.com/whoyoung388/rtg-backend#readme"
 }

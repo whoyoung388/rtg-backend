@@ -94,14 +94,25 @@ stock = {
             return;
         }
 
+        // if first time stock to this warehouse number
         if (!(warehouseID in warehouseStocks)) {
             warehouseStocks[warehouseID] = {}
         }
-        if (!warehouseStocks[warehouseID][sku]) {
-            warehouseStocks[warehouseID][sku] = quantity;
-        } else {
-            warehouseStocks[warehouseID][sku] += quantity;
+
+        // check if incoming stocks exceed avaialable stock limit
+        actualQTY = quantity;
+        if (warehouses.get(warehouseID) !== undefined) {
+            remainingSpace = warehouses.get(warehouseID);
+            actualQTY = Math.min(remainingSpace, quantity)
+            warehouses.set(warehouseID, warehouses.get(warehouseID) - actualQTY);
         }
+
+        if (!warehouseStocks[warehouseID][sku]) {
+            warehouseStocks[warehouseID][sku] = actualQTY;
+        } else {
+            warehouseStocks[warehouseID][sku] += actualQTY;
+        }
+
     }
 }
 commands.push(stock);

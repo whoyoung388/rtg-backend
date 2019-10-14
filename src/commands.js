@@ -137,8 +137,6 @@ listWarehouse = {
             console.log('Error length');
             return;
         }
-        header = strFormatter(['ITEM_NAME', 'ITEM_SKU', 'QTY'], [40, 40, 10]);
-        console.log(header);
         warehouseID = commandArray[2];
         if (!isInteger(warehouseID)) {
             console.log('Error invalid warehouse number');
@@ -149,6 +147,8 @@ listWarehouse = {
             console.log('Error warehouse number not found');
             return;
         }
+        header = strFormatter(['ITEM_NAME', 'ITEM_SKU', 'QTY'], [40, 40, 10]);
+        console.log(header);
         for (let [sku, qty] of Object.entries(warehouseStocks[warehouseID])) {
             row = strFormatter([`${[products[sku]]}`, `${sku}`, `${qty}`], [40, 40, 10]);
             console.log(row);

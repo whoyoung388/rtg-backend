@@ -110,6 +110,50 @@ stock = {
 }
 commands.push(stock);
 
+unstock = {
+    text: 'UNSTOCK',
+    action: (commandArray) => {
+        if (commandArray.length !== 4) {
+            console.log('Error length');
+            return;
+        }
+        sku = commandArray[1];
+        warehouseID = commandArray[2];
+        quantity = commandArray[3];
+        if (!(sku in products)) {
+            console.log('Error sku not found');
+            return;
+        }
+        if (!isInteger(warehouseID)) {
+            console.log('Error invalid warehouse number');
+            return;
+        }
+        if (!isInteger(quantity)) {
+            console.log('Error QTY must be integer');
+            return;
+        }
+        warehouseID = +warehouseID;
+        quantity = +quantity;
+
+        if (!(warehouses.has(warehouseID))) {
+            console.log('Error warehouse not found');
+            return;
+        }
+
+        // if the warehouse is empty or doesn't contain SKU
+        if (!(warehouseID in warehouseStocks) || !(sku in warehouseStocks[warehouseID])) {
+            console.log('Warehouse does not contain this product.');
+            return;
+        }
+
+        // check if unstock amount > current available amount
+        actualQTY = Math.min(quantity, warehouseStocks[warehouseID][sku]);
+        warehouses.set(warehouseID, warehouses.get(warehouseID) + actualQTY);
+        warehouseStocks[warehouseID][sku] -= actualQTY;
+    }
+}
+commands.push(unstock);
+
 listProducts = {
     text: 'LIST PRODUCTS',
     action: () => {

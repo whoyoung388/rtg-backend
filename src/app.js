@@ -1,5 +1,5 @@
 const readline = require('readline');
-const {commands, products, warehouses, warehouseStocks } = require('./commands.js');
+const { commands } = require('./commands.js');
 
 const rl = readline.createInterface({
   input: process.stdin,

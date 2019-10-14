@@ -2,6 +2,7 @@ const { isInteger } = require('./utils.js')
 
 const products = {};
 const warehouses = new Map();
+const warehouseStocks = {};
 const commands = [];
 
 addProduct = {
@@ -39,16 +40,17 @@ addWarehouse = {
             return;
         }
         warehouseID = +commandArray[2];
+        stockLimit = commandArray[3];
         if (warehouses.has(warehouseID)) {
             console.log('Error warehouse already exist')
             return;
         }
-        if (commandArray[3]) {
-            if (!isInteger(commandArray[3])) {
+        if (stockLimit) {
+            if (!isInteger(stockLimit)) {
                 console.log('Error Stock limit must be integer')
                 return;
             }
-            warehouses.set(warehouseID, +commandArray[3])
+            warehouses.set(warehouseID, +stockLimit);
         } else {
             warehouses.set(warehouseID, undefined)
         }
@@ -76,9 +78,29 @@ stock = {
             console.log('Error sku not found');
             return;
         }
-        if (!isNumber(warehouseID)) {
+        if (!isInteger(warehouseID)) {
             console.log('Error invalid warehouse number');
             return;
+        }
+        if (!isInteger(quantity)) {
+            console.log('Error QTY must be integer');
+            return;
+        }
+        warehouseID = +warehouseID;
+        quantity = +quantity;
+
+        if (!(warehouses.has(warehouseID))) {
+            console.log('Error warehouse not found');
+            return;
+        }
+
+        if (!(warehouseID in warehouseStocks)) {
+            warehouseStocks[warehouseID] = {}
+        }
+        if (!warehouseStocks[warehouseID][sku]) {
+            warehouseStocks[warehouseID][sku] = quantity;
+        } else {
+            warehouseStocks[warehouseID][sku] += quantity;
         }
     }
 }
@@ -110,4 +132,4 @@ listWarehouse = {
 
 }
 
-module.exports = {commands, products, warehouses};
+module.exports = { commands, products, warehouses, warehouseStocks };

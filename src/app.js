@@ -1,5 +1,5 @@
 const readline = require('readline');
-const {commands, products, warehouses} = require('./commands.js');
+const {commands, products, warehouses, warehouseStocks } = require('./commands.js');
 
 console.log(commands)
 console.log(products)
@@ -24,6 +24,9 @@ rl.on('line', (input) => {
     command = isValidInput(input);
     if (command !== undefined) {
         command(input.match(/[^" ]+|"[^"]+"/g));
+        console.log(products);
+        console.log(warehouses);
+        console.log(warehouseStocks);
     } else {
         console.log('Invalid input!')
     }

@@ -1,4 +1,4 @@
-const { isInteger } = require('./utils.js')
+const { isInteger, strFormatter } = require('./utils.js')
 
 const products = {};
 const warehouses = new Map();
@@ -140,7 +140,33 @@ listWarehouses = {
 commands.push(listWarehouses);
 
 listWarehouse = {
-
+    text: 'LIST WAREHOUSE',
+    action: (commandArray) => {
+        console.log('CASE: list specific warehouse');
+        if (commandArray.length !== 3) {
+            console.log('Error length');
+            return;
+        }
+        header = strFormatter(['ITEM_NAME', 'ITEM_SKU', 'QTY'], [40, 40, 10]);
+        console.log(header);
+        // console.log('ITEM_NAME'.padEnd(31), 'ITEM_SKU'.padEnd(32), 'QTY'.padEnd(37));
+        warehouseID = commandArray[2];
+        if (!isInteger(warehouseID)) {
+            console.log('Error invalid warehouse number');
+            return;
+        }
+        warehouseID = +warehouseID;
+        if (!warehouses.has(warehouseID)) {
+            console.log('Error warehouse number not found');
+            return;
+        }
+        for (let [sku, qty] of Object.entries(warehouseStocks[warehouseID])) {
+            row = strFormatter([`${[products[sku]]}`, `${sku}`, `${qty}`], [40, 40, 10]);
+            console.log(row);
+            // console.log(`${products[sku]}\t\t${sku}\t\t${qty}`);
+        }
+    }
 }
+commands.push(listWarehouse);
 
 module.exports = { commands, products, warehouses, warehouseStocks };

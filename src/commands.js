@@ -1,26 +1,27 @@
-const { isInteger, strFormatter } = require('./utils.js')
+const { isInteger, strFormatter } = require('./utils')
+const { success, warning, danger, title } = require('./highlights')
 
 const products = {};
 const warehouses = new Map();
 const warehouseStocks = {};
 const commands = [];
+const log = console.log;
 
 addProduct = {
     text: 'ADD PRODUCT',
     action: (commandArray) => {
         if (commandArray.length !== 4) {
-            console.log('Error length');
+            log(danger(addProduct.text, 'INALID NUMBER OF ARGUMENTS'));
             return;
         }
         productName = commandArray[2].replace(/"/g, "");
         sku = commandArray[3];
         if ((sku in products) && (products[sku] !== productName)) {
-            console.log('Error duplicate sku');
+            log(danger(addProduct.text, `PRODUCT with SKU ${sku} ALREADY EXISTS`));
             return;
         }
         products[sku] = productName;
-        console.log('success!');
-        return;
+        log(success(addProduct.text));
     }
 }
 commands.push(addProduct);
@@ -29,29 +30,29 @@ addWarehouse = {
     text: 'ADD WAREHOUSE',
     action: (commandArray) => {
         if ((commandArray.length > 4) || (commandArray.length < 3)) {
-            console.log('Error length');
+            log(danger(addWarehouse.text, 'INALID NUMBER OF ARGUMENTS'));
             return;
         }
         if (!isInteger(commandArray[2])) {
-            console.log('Error warehouse num not an integer');
+            log(danger(addWarehouse.text, 'WAREHOUSE NUMBER MUST BE AN INTEGER'))
             return;
         }
         warehouseID = +commandArray[2];
         stockLimit = commandArray[3];
         if (warehouses.has(warehouseID)) {
-            console.log('Error warehouse already exist')
+            log(warning(addWarehouse.text, 'WAREHOUSE ALREADY EXISTS'))
             return;
         }
         if (stockLimit) {
             if (!isInteger(stockLimit)) {
-                console.log('Error Stock limit must be integer')
+                log(danger(addWarehouse.text, 'STOCK LIMIT MUST BE AN INTEGER'))
                 return;
             }
             warehouses.set(warehouseID, +stockLimit);
         } else {
             warehouses.set(warehouseID, undefined)
         }
-        console.log('success!');
+        log(success(addWarehouse.text));
         return;
     }
 }
@@ -61,29 +62,29 @@ stock = {
     text: 'STOCK',
     action: (commandArray) => {
         if (commandArray.length !== 4) {
-            console.log('Error length');
+            log(danger(stock.text, 'INALID NUMBER OF ARGUMENTS'));
             return;
         }
         sku = commandArray[1];
         warehouseID = commandArray[2];
         quantity = commandArray[3];
         if (!(sku in products)) {
-            console.log('Error sku not found');
+            log(danger(stock.text, 'SKU IS NOT IN PRODUCT CATELOG'))
             return;
         }
         if (!isInteger(warehouseID)) {
-            console.log('Error invalid warehouse number');
+            log(danger(stock.text, 'WAREHOUSE NUMBER MUST BE AN INTEGER'))
             return;
         }
         if (!isInteger(quantity)) {
-            console.log('Error QTY must be integer');
+            log(danger(stock.text, 'QUANTITY NUMBER MUST BE AN INTEGER'))
             return;
         }
         warehouseID = +warehouseID;
         quantity = +quantity;
 
         if (!(warehouses.has(warehouseID))) {
-            console.log('Error warehouse not found');
+            log(danger(stock.text, 'WAREHOUSE NUMBER NOT FOUND'))
             return;
         }
 
@@ -114,35 +115,35 @@ unstock = {
     text: 'UNSTOCK',
     action: (commandArray) => {
         if (commandArray.length !== 4) {
-            console.log('Error length');
+            log(danger(unstock.text, 'INALID NUMBER OF ARGUMENTS'));
             return;
         }
         sku = commandArray[1];
         warehouseID = commandArray[2];
         quantity = commandArray[3];
         if (!(sku in products)) {
-            console.log('Error sku not found');
+            log(danger(unstock.text, 'SKU IS NOT IN PRODUCT CATELOG'))
             return;
         }
         if (!isInteger(warehouseID)) {
-            console.log('Error invalid warehouse number');
+            log(danger(unstock.text, 'WAREHOUSE NUMBER MUST BE AN INTEGER'))
             return;
         }
         if (!isInteger(quantity)) {
-            console.log('Error QTY must be integer');
+            log(danger(unstock.text, 'QUANTITY NUMBER MUST BE AN INTEGER'))
             return;
         }
         warehouseID = +warehouseID;
         quantity = +quantity;
 
         if (!(warehouses.has(warehouseID))) {
-            console.log('Error warehouse not found');
+            log(danger(unstock.text, 'WAREHOUSE NUMBER NOT FOUND'));
             return;
         }
 
         // if the warehouse is empty or doesn't contain SKU
         if (!(warehouseID in warehouseStocks) || !(sku in warehouseStocks[warehouseID])) {
-            console.log('Warehouse does not contain this product.');
+            log(warning(unstock.text, 'PRODUCT NOT FOUND IN THIS WAREHOUSE'));
             return;
         }
 
@@ -157,9 +158,13 @@ commands.push(unstock);
 listProducts = {
     text: 'LIST PRODUCTS',
     action: () => {
+        header = strFormatter(['ITEM_NAME', 'ITEM_SKU'], [50, 40])
+        log(title(header));
         for (let [sku, productName] of Object.entries(products)) {
-            console.log(`${productName} ${sku}`);
+            row = strFormatter([`${productName}`, `${sku}`], [50, 40])
+            log(row);
         }
+        log();
     }
 }
 commands.push(listProducts);
@@ -167,9 +172,11 @@ commands.push(listProducts);
 listWarehouses = {
     text: 'LIST WAREHOUSES',
     action: () => {
+        log(title(' WAREHOUSES '));
         for (let [warehouseID, stockLimit] of warehouses) {
-            console.log(`${warehouseID}`);
+            log(`${warehouseID}`);
         }
+        log();
     }
 }
 commands.push(listWarehouses);
@@ -178,25 +185,30 @@ listWarehouse = {
     text: 'LIST WAREHOUSE',
     action: (commandArray) => {
         if (commandArray.length !== 3) {
-            console.log('Error length');
+            log(danger(listWarehouse.text, 'INALID NUMBER OF ARGUMENTS'));
             return;
         }
         warehouseID = commandArray[2];
         if (!isInteger(warehouseID)) {
-            console.log('Error invalid warehouse number');
+            log(danger(listWarehouse.text, 'QUANTITY NUMBER MUST BE AN INTEGER'))
             return;
         }
         warehouseID = +warehouseID;
         if (!warehouses.has(warehouseID)) {
-            console.log('Error warehouse number not found');
+            log(danger(listWarehouse.text, 'WAREHOUSE NUMBER NOT FOUND'));
+            return;
+        }
+        if (!(warehouseID in warehouseStocks)) {
+            log(warning(listWarehouse.text, `WAREHOUSE ${warehouseID} IS EMPTY`));
             return;
         }
         header = strFormatter(['ITEM_NAME', 'ITEM_SKU', 'QTY'], [40, 40, 10]);
-        console.log(header);
+        log(title(header));
         for (let [sku, qty] of Object.entries(warehouseStocks[warehouseID])) {
             row = strFormatter([`${[products[sku]]}`, `${sku}`, `${qty}`], [40, 40, 10]);
-            console.log(row);
+            log(row);
         }
+        log();
     }
 }
 commands.push(listWarehouse);

@@ -19,5 +19,8 @@
   "homepage": "https://github.com/whoyoung388/rtg-backend#readme",
   "devDependencies": {
     "jest": "^24.9.0"
+  },
+  "dependencies": {
+    "chalk": "^2.4.2"
   }
 }

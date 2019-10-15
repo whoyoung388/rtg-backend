@@ -1,11 +1,17 @@
 const { isInteger, strFormatter } = require('./utils')
 const { success, warning, danger, title } = require('./highlights')
 
-const products = {};
-const warehouses = new Map();
-const warehouseStocks = {};
+let products = {};
+let warehouses = new Map();
+let warehouseStocks = {};
 const commands = [];
 const log = console.log;
+
+clear = () => {
+    products = {};
+    warehouses = new Map();
+    warehouseStocks = {};
+}
 
 addProduct = {
     text: 'ADD PRODUCT',
@@ -32,29 +38,29 @@ addWarehouse = {
     action: (commandArray) => {
         if ((commandArray.length > 4) || (commandArray.length < 3)) {
             log(danger(addWarehouse.text, 'INALID NUMBER OF ARGUMENTS'));
-            return;
+            return 1;
         }
         if (!isInteger(commandArray[2])) {
             log(danger(addWarehouse.text, 'WAREHOUSE NUMBER MUST BE AN INTEGER'))
-            return;
+            return 1;
         }
         warehouseID = +commandArray[2];
         stockLimit = commandArray[3];
         if (warehouses.has(warehouseID)) {
             log(warning(addWarehouse.text, 'WAREHOUSE ALREADY EXISTS'))
-            return;
+            return 0;
         }
         if (stockLimit) {
             if (!isInteger(stockLimit)) {
                 log(danger(addWarehouse.text, 'STOCK LIMIT MUST BE AN INTEGER'))
-                return;
+                return 1;
             }
             warehouses.set(warehouseID, +stockLimit);
         } else {
             warehouses.set(warehouseID, undefined)
         }
         log(success(addWarehouse.text));
-        return;
+        return 0;
     }
 }
 commands.push(addWarehouse);
@@ -236,4 +242,4 @@ listWarehouse = {
 }
 commands.push(listWarehouse);
 
-module.exports = { commands, products, warehouses, warehouseStocks, addProduct, addWarehouse, stock, unstock, listProducts, listWarehouse, listWarehouses };
+module.exports = { commands, products, warehouses, warehouseStocks, addProduct, addWarehouse, stock, unstock, listProducts, listWarehouse, listWarehouses, clear };

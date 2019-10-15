@@ -51,3 +51,7 @@ test('Integer 0 is an integer', () => {
     expect(isInteger(input)).toBe(true);
 })
 
+test('-1000 is not a positive integer', () => {
+    input = '-1000';
+    expect(isInteger(input)).toBe(false);
+})

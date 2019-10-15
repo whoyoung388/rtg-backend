@@ -1,7 +1,7 @@
 const chalk = require('chalk');
 
 const info = (str) => (
-    chalk.underline.grey(str)
+    chalk.underline.hex('#AEC9D6')(str)
 )
 
 const success = (command) => (
@@ -17,7 +17,7 @@ const danger = (command, response) => (
 )
 
 const title = (str) => (
-    chalk.black.bgWhite(str)
+    chalk.grey.bgWhite(str)
 )
 
 module.exports = { success, warning, danger, title }

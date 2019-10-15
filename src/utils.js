@@ -14,10 +14,10 @@ fixedLengthStr = (str, len) => {
     if (str.length <= len) {
         return str.padEnd(len);
     }
-    if (len < 4) {
+    if (len < 5) {
         return str.slice(0, len);
     }
-    truncateStr = str.slice(0, len-3) + '...'
+    truncateStr = str.slice(0, len-4) + '... '
     return truncateStr;
 }
 

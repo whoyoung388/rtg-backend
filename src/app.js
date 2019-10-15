@@ -1,5 +1,8 @@
 const readline = require('readline');
-const { commands } = require('./commands.js');
+const { commands } = require('./commands');
+const { danger } = require('./highlights')
+
+const log = console.log;
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -22,12 +25,12 @@ rl.on('line', (input) => {
     if (command !== undefined) {
         command(input.match(/[^" ]+|"[^"]+"/g));
     } else {
-        console.log('Invalid input!')
+        log(danger(input, 'INVALID COMMAND'));
     }
     rl.prompt();
 }).on('close', () => {
-    console.log();
-    console.log('Good bye.');
+    log();
+    log('Good bye.');
     process.exit(0);
 });
 

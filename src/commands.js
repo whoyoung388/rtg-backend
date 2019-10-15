@@ -70,29 +70,29 @@ stock = {
     action: (commandArray) => {
         if (commandArray.length !== 4) {
             log(danger(stock.text, 'INALID NUMBER OF ARGUMENTS'));
-            return;
+            return 1;
         }
         sku = commandArray[1];
         warehouseID = commandArray[2];
         quantity = commandArray[3];
         if (!(sku in products)) {
             log(danger(stock.text, 'SKU IS NOT IN PRODUCT CATELOG'))
-            return;
+            return 1;
         }
         if (!isInteger(warehouseID)) {
             log(danger(stock.text, 'WAREHOUSE NUMBER MUST BE AN INTEGER'))
-            return;
+            return 1;
         }
         if (!isInteger(quantity)) {
             log(danger(stock.text, 'QUANTITY NUMBER MUST BE AN INTEGER'))
-            return;
+            return 1;
         }
         warehouseID = +warehouseID;
         quantity = +quantity;
 
         if (!(warehouses.has(warehouseID))) {
             log(danger(stock.text, 'WAREHOUSE NUMBER NOT FOUND'))
-            return;
+            return 1;
         }
 
         // if first time stock to this warehouse number
@@ -107,6 +107,12 @@ stock = {
             actualQTY = Math.min(remainingSpace, quantity)
             warehouses.set(warehouseID, warehouses.get(warehouseID) - actualQTY);
         }
+        if (!warehouseStocks[warehouseID][sku]) {
+            warehouseStocks[warehouseID][sku] = actualQTY;
+        } else {
+            warehouseStocks[warehouseID][sku] += actualQTY;
+        }
+
         if (actualQTY !== quantity) {
             log(warning(stock.text, 
                 `SHIPMENT QTY: ${quantity}, WAREHOUSE REMAINING SPACE: ${remainingSpace} ACTUAL SHIPPED QTY: ${actualQTY}`
@@ -114,12 +120,7 @@ stock = {
         } else {
             log(success(stock.text));
         }
-
-        if (!warehouseStocks[warehouseID][sku]) {
-            warehouseStocks[warehouseID][sku] = actualQTY;
-        } else {
-            warehouseStocks[warehouseID][sku] += actualQTY;
-        }
+        return 0;
     }
 }
 commands.push(stock);
@@ -129,35 +130,35 @@ unstock = {
     action: (commandArray) => {
         if (commandArray.length !== 4) {
             log(danger(unstock.text, 'INALID NUMBER OF ARGUMENTS'));
-            return;
+            return 1;
         }
         sku = commandArray[1];
         warehouseID = commandArray[2];
         quantity = commandArray[3];
         if (!(sku in products)) {
             log(danger(unstock.text, 'SKU IS NOT IN PRODUCT CATELOG'))
-            return;
+            return 1;
         }
         if (!isInteger(warehouseID)) {
             log(danger(unstock.text, 'WAREHOUSE NUMBER MUST BE AN INTEGER'))
-            return;
+            return 1;
         }
         if (!isInteger(quantity)) {
             log(danger(unstock.text, 'QUANTITY NUMBER MUST BE AN INTEGER'))
-            return;
+            return 1;
         }
         warehouseID = +warehouseID;
         quantity = +quantity;
 
         if (!(warehouses.has(warehouseID))) {
             log(danger(unstock.text, 'WAREHOUSE NUMBER NOT FOUND'));
-            return;
+            return 1;
         }
 
         // if the warehouse is empty or doesn't contain SKU
         if (!(warehouseID in warehouseStocks) || !(sku in warehouseStocks[warehouseID])) {
             log(warning(unstock.text, 'PRODUCT NOT FOUND IN THIS WAREHOUSE'));
-            return;
+            return 2;
         }
 
         // check if unstock amount > current available amount
@@ -176,6 +177,7 @@ unstock = {
         if (warehouseStocks[warehouseID][sku] === 0) {
             delete warehouseStocks[warehouseID][sku];
         }
+        return 0;
     }
 }
 commands.push(unstock);
@@ -183,10 +185,11 @@ commands.push(unstock);
 listProducts = {
     text: 'LIST PRODUCTS',
     action: () => {
-        header = strFormatter(['ITEM_NAME', 'ITEM_SKU'], [40, 40])
+        format = [40, 40];
+        header = strFormatter(['ITEM_NAME', 'ITEM_SKU'], format)
         log(title(header));
         for (let [sku, productName] of Object.entries(products)) {
-            row = strFormatter([`${productName}`, `${sku}`], [40, 40])
+            row = strFormatter([`${productName}`, `${sku}`], format)
             log(row);
         }
         log();
@@ -197,13 +200,14 @@ commands.push(listProducts);
 listWarehouses = {
     text: 'LIST WAREHOUSES',
     action: () => {
-        header = strFormatter(['WAREHOUSE #', 'STOCK LIMIT'], [15, 12]);
+        format = [20, 20];
+        header = strFormatter([' WAREHOUSE #', 'REMAINING SPACE '], format);
         log(title(header));
         for (let [warehouseID, stockLimit] of warehouses) {
             if (stockLimit === undefined) {
                 stockLimit = 'Infinity';
             }
-            row = strFormatter([`${warehouseID}`, `${stockLimit}`], [15, 12]);
+            row = strFormatter([` ${warehouseID}`, `${stockLimit}`], format);
             log(row);
         }
         log();
@@ -231,10 +235,11 @@ listWarehouse = {
         if (!(warehouseID in warehouseStocks)) {
             warehouseStocks[warehouseID] = {}
         }
-        header = strFormatter(['ITEM_NAME', 'ITEM_SKU', 'QTY'], [40, 30, 10]);
+        format = [40, 34, 6];
+        header = strFormatter(['ITEM_NAME', 'ITEM_SKU', 'QTY'], format);
         log(title(header));
         for (let [sku, qty] of Object.entries(warehouseStocks[warehouseID])) {
-            row = strFormatter([`${[products[sku]]}`, `${sku}`, `${qty}`], [40, 30, 10]);
+            row = strFormatter([`${[products[sku]]}`, `${sku}`, `${qty}`], format);
             log(row);
         }
         log();

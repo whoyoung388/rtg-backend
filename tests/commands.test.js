@@ -1,4 +1,4 @@
-const { clear, addProduct, addWarehouse, stock, unstock, listProducts, listWarehouse, listWarehouses } = require('../src/commands');
+const { clear, addProduct, addWarehouse, stock, unstock } = require('../src/commands');
 
 // ADD PRODUCT
 test('valid command for ADD PRODUCT', () => {
@@ -67,4 +67,51 @@ test('invalid warehouse stock limit', () => {
 })
 
 // STOCK
+test('stock product not in catelog', () => {
+    clear();
+    addWarehouse.action(['ADD', 'WAREHOUSE', '970', '1000']);
+    commandArray = ['STOCK', '38538505-0767-453f-89af-d11c809ebb3b', '970', '1000'];
+    expect(stock.action(commandArray)).toBe(1);
+})
 
+test('warehouse number does not exist', () => {
+    clear();
+    addProduct.action(['ADD', 'PRODUCT', '"Sofia Vegara 5 Piece Living Room Set"', '38538505-0767-453f-89af-d11c809ebb3b']);
+    commandArray = ['STOCK', '38538505-0767-453f-89af-d11c809ebb3b', '970', '1000'];
+    expect(stock.action(commandArray)).toBe(1);
+})
+
+test('invalid QTY input', () => {
+    clear();
+    addWarehouse.action(['ADD', 'WAREHOUSE', '970', '1000']);
+    addProduct.action(['ADD', 'PRODUCT', '"Sofia Vegara 5 Piece Living Room Set"', '38538505-0767-453f-89af-d11c809ebb3b']);
+    commandArray = ['STOCK', '38538505-0767-453f-89af-d11c809ebb3b', '970', 'X1000'];
+    expect(stock.action(commandArray)).toBe(1);
+})
+
+test('valid commands', () => {
+    clear();
+    addWarehouse.action(['ADD', 'WAREHOUSE', '970', '1000']);
+    addProduct.action(['ADD', 'PRODUCT', '"Sofia Vegara 5 Piece Living Room Set"', '38538505-0767-453f-89af-d11c809ebb3b']);
+    commandArray = ['STOCK', '38538505-0767-453f-89af-d11c809ebb3b', '970', '1000'];
+    expect(stock.action(commandArray)).toBe(0);
+})
+
+
+// UNSTOCK
+test('warehouse number does not exist', () => {
+    clear();
+    addProduct.action(['ADD', 'PRODUCT', '"Sofia Vegara 5 Piece Living Room Set"', '38538505-0767-453f-89af-d11c809ebb3b']);
+    commandArray = ['UNSTOCK', '38538505-0767-453f-89af-d11c809ebb3b', '970', '1000'];
+    expect(unstock.action(commandArray)).toBe(1);
+})
+
+test('stock 1000 and unstock 1000, check remaining', () => {
+    clear();
+    addProduct.action(['ADD', 'PRODUCT', '"Sofia Vegara 5 Piece Living Room Set"', '38538505-0767-453f-89af-d11c809ebb3b']);
+    addWarehouse.action(['ADD', 'WAREHOUSE', '970', '1000']);
+    stock.action(['STOCK', '38538505-0767-453f-89af-d11c809ebb3b', '970', '1000'])
+    unstock.action(['UNSTOCK', '38538505-0767-453f-89af-d11c809ebb3b', '970', '1000'])
+    commandArray = ['UNSTOCK', '38538505-0767-453f-89af-d11c809ebb3b', '970', '1000'];
+    expect(unstock.action(commandArray)).toBe(2);
+})

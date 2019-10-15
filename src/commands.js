@@ -12,16 +12,17 @@ addProduct = {
     action: (commandArray) => {
         if (commandArray.length !== 4) {
             log(danger(addProduct.text, 'INALID NUMBER OF ARGUMENTS'));
-            return;
+            return 1;
         }
         productName = commandArray[2].replace(/"/g, "");
         sku = commandArray[3];
         if ((sku in products) && (products[sku] !== productName)) {
             log(danger(addProduct.text, `PRODUCT WITH SKU ${sku} ALREADY EXISTS`));
-            return;
+            return 1;
         }
         products[sku] = productName;
         log(success(addProduct.text));
+        return 0;
     }
 }
 commands.push(addProduct);
@@ -235,4 +236,4 @@ listWarehouse = {
 }
 commands.push(listWarehouse);
 
-module.exports = { commands, products, warehouses, warehouseStocks };
+module.exports = { commands, products, warehouses, warehouseStocks, addProduct, addWarehouse, stock, unstock, listProducts, listWarehouse, listWarehouses };

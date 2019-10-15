@@ -49,7 +49,7 @@ test('warehouse already exists', () => {
     clear();
     commandArray = ['ADD', 'WAREHOUSE', '970', '1000'];
     addWarehouse.action(commandArray);
-    expect(addWarehouse.action(commandArray)).toBe(0);
+    expect(addWarehouse.action(commandArray)).toBe(1);
 })
 
 test('invalid warehouse number', () => {

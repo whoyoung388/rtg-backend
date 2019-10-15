@@ -47,8 +47,8 @@ addWarehouse = {
         warehouseID = +commandArray[2];
         stockLimit = commandArray[3];
         if (warehouses.has(warehouseID)) {
-            log(warning(addWarehouse.text, 'WAREHOUSE ALREADY EXISTS'))
-            return 0;
+            log(danger(addWarehouse.text, 'WAREHOUSE ALREADY EXISTS'))
+            return 1;
         }
         if (stockLimit) {
             if (!isInteger(stockLimit)) {

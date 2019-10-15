@@ -29,4 +29,8 @@ strFormatter = (arr, lenArr) => {
     return res;
 }
 
-module.exports = { isNumber, isInteger, strFormatter }
+parser = (str) => (
+    str.match(/[^" ]+|"[^"]+"/g)
+)
+
+module.exports = { isNumber, isInteger, strFormatter, parser }

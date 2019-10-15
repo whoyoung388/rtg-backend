@@ -1,6 +1,7 @@
 const readline = require('readline');
 const { commands } = require('./commands');
-const { danger } = require('./highlights')
+const { danger } = require('./highlights');
+const { parser } = require('./utils');
 
 const log = console.log;
 
@@ -23,7 +24,8 @@ rl.prompt();
 rl.on('line', (input) => {
     command = isValidInput(input);
     if (command !== undefined) {
-        command(input.match(/[^" ]+|"[^"]+"/g));
+        parsedArray = parser(input);
+        command(parsedArray);
     } else {
         log(danger(input, 'INVALID COMMAND'));
     }

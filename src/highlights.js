@@ -5,15 +5,15 @@ const info = (str) => (
 )
 
 const success = (command) => (
-    `${chalk.green.inverse(' SUCCESS ')} ${command}\n`
+    `${chalk.green.bold(' SUCCESS ')} ${command}\n`
 )
 
 const warning = (command, response) => (
-    `${chalk.yellow.inverse(' WARNING ')} ${command}: ${info(response)}\n`
+    `${chalk.yellow.bold(' WARNING ')} ${command}: ${info(response)}\n`
 )
 
 const danger = (command, response) => (
-    `${chalk.red.inverse(' ERROR ')} ${command}: ${info(response)}\n`
+    `${chalk.red.bold(' ERROR ')} ${command}: ${info(response)}\n`
 )
 
 const title = (str) => (
